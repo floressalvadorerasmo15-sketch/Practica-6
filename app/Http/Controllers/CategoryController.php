@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
-    // Listar categorías del usuario autenticado
     public function index(Request $request)
     {
-        $categories = $request->user()->categories;
-
-        return response()->json($categories);
+        return response()->json(
+            $request->user()->categories
+        );
     }
 
-    // Crear categoría
     public function store(StoreCategoryRequest $request)
     {
         $category = $request->user()->categories()->create(
@@ -30,7 +28,6 @@ class CategoryController extends Controller
         ], 201);
     }
 
-    // Mostrar una categoría
     public function show(Category $category)
     {
         if ($category->user_id != auth()->id()) {
@@ -42,7 +39,6 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    // Actualizar categoría
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         if ($category->user_id != auth()->id()) {
@@ -59,7 +55,6 @@ class CategoryController extends Controller
         ]);
     }
 
-    // Eliminar categoría
     public function destroy(Category $category)
     {
         if ($category->user_id != auth()->id()) {

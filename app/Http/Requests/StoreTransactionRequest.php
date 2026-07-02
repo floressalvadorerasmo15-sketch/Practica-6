@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTransactionRequest extends FormRequest
@@ -12,18 +11,19 @@ class StoreTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'category_id' => 'required|exists:categories,id',
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'nullable|string|max:255',
+            'transaction_date' => 'required|date',
         ];
     }
 }

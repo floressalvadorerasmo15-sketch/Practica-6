@@ -3,63 +3,75 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Http\Requests\StoreTransactionRequest;
+use App\Http\Requests\UpdateTransactionRequest;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // Listar transacciones del usuario autenticado
+    public function index(Request $request)
     {
-        //
+        return response()->json(
+            $request->user()->transactions()->with('category')->get()
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Crear transacción
+    public function store(StoreTransactionRequest $request)
     {
-        //
+        $transaction = $request->user()->transactions()->create(
+            $request->validated()
+        );
+
+        return response()->json([
+            'message' => 'Transacción creada correctamente',
+            'data' => $transaction
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
+    // Mostrar una transacción
     public function show(Transaction $transaction)
     {
-        //
+        if ($transaction->user_id != auth()->id()) {
+            return response()->json([
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        return response()->json($transaction);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Transaction $transaction)
+    // Actualizar una transacción
+    public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        //
+        if ($transaction->user_id != auth()->id()) {
+            return response()->json([
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        $transaction->update($request->validated());
+
+        return response()->json([
+            'message' => 'Transacción actualizada correctamente',
+            'data' => $transaction
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Transaction $transaction)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Eliminar una transacción
     public function destroy(Transaction $transaction)
     {
-        //
+        if ($transaction->user_id != auth()->id()) {
+            return response()->json([
+                'message' => 'Transacción eliminada correctamente'
+            ]);
+        }
+
+        $transaction->delete();
+
+        return response()->json([
+            'message' => 'Transacción eliminada correctamente'
+        ]);
     }
 }

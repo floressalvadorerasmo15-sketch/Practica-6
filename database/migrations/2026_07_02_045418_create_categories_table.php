@@ -7,21 +7,21 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
+{
+    Schema::create('categories', function (Blueprint $table) {
+        $table->id();
 
-            $table->foreignId('user_id')
-                  ->constrained()
-                  ->cascadeOnDelete();
+        $table->foreignId('user_id')
+              ->constrained()
+              ->cascadeOnDelete();
 
-            $table->string('name');
-            $table->enum('type', ['ingreso', 'egreso']);
-            $table->string('color')->nullable();
+        $table->string('name');
+        $table->enum('type', ['ingreso', 'egreso']);
+        $table->string('color')->nullable();
 
-            $table->timestamps();
-        });
-    }
+        $table->timestamps();
+    });
+}
 
     public function down(): void
     {
